@@ -1,5 +1,5 @@
 {
-	"name": "@figma-design-system-query/shared-types",
+	"name": "@figma-design-system-query/types",
 	"version": "1.0.0",
 	"private": true,
 	"main": "./dist/index.js",

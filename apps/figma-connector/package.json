@@ -1,5 +1,5 @@
 {
-	"name": "@figma-design-system-query/figma-connector",
+	"name": "@figma-ds-ai/harvester",
 	"version": "1.0.0",
 	"private": true,
 	"main": "./dist/index.js",
@@ -12,7 +12,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@figma-design-system-query/shared-types": "workspace:*",
+		"@figma-design-system-query/types": "workspace:*",
 		"axios": "^1.0.0",
 		"dotenv": "^16.5.0",
 		"js-yaml": "^4.0.0"

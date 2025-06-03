@@ -11,7 +11,7 @@ import type {
 	FigmaVariableCollection,
 	BaseFigmaNode,
 	FigmaNode, // API 응답 타입으로 사용
-} from "@figma-design-system-query/shared-types";
+} from "@figma-design-system-query/types";
 
 const MONOREPO_ROOT = path.resolve(process.cwd(), "../..");
 dotenv.config({ path: path.resolve(MONOREPO_ROOT, ".env") });

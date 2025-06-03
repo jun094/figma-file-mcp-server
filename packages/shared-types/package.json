@@ -1,0 +1,15 @@
+{
+	"name": "@figma-design-system-query/shared-types",
+	"version": "1.0.0",
+	"private": true,
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "tsup src/index.ts --format esm,cjs --dts --clean",
+		"dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+		"lint": "echo 'Linting shared-types...'",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {}
+}

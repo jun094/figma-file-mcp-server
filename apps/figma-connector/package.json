@@ -1,0 +1,22 @@
+{
+	"name": "@figma-design-system-query/figma-connector",
+	"version": "1.0.0",
+	"private": true,
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "tsup src/index.ts --format esm,cjs --dts --clean",
+		"dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+		"start": "node dist/index.js",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@figma-design-system-query/shared-types": "workspace:*",
+		"axios": "^1.0.0",
+		"js-yaml": "^4.0.0"
+	},
+	"devDependencies": {
+		"@types/js-yaml": "^4.0.0"
+	}
+}

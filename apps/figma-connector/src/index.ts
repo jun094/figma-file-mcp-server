@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import path from "path";
 import axios, { AxiosError } from "axios";
 import yaml from "js-yaml";
@@ -13,15 +13,15 @@ import type {
 	FigmaNode, // API 응답 타입으로 사용
 } from "@figma-design-system-query/shared-types";
 
-// --- Configuration ---
-const projectRoot = path.resolve(process.cwd(), "../..");
-dotenv.config({ path: path.resolve(projectRoot, ".env") });
+const MONOREPO_ROOT = path.resolve(process.cwd(), "../..");
+dotenv.config({ path: path.resolve(MONOREPO_ROOT, ".env") });
 
+// --- Configuration ---
 const FIGMA_API_TOKEN = process.env.FIGMA_API_TOKEN;
 const FIGMA_FILE_ID = process.env.FIGMA_FILE_ID;
 
 const OUTPUT_DIR_NAME = process.env.OUTPUT_YAML_DIR || "output/design-system";
-const OUTPUT_DIR = path.resolve(process.cwd(), OUTPUT_DIR_NAME);
+const OUTPUT_DIR = path.resolve(MONOREPO_ROOT, OUTPUT_DIR_NAME);
 const OUTPUT_FILE_PATH = path.join(OUTPUT_DIR, "design-system-data.yaml");
 
 const FIGMA_API_BASE_URL = "https://api.figma.com/v1";

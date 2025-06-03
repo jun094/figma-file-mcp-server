@@ -1,0 +1,22 @@
+{
+	"name": "figma-design-system-query",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Figma Design System Q&A MCP Server Monorepo",
+	"main": "index.js",
+	"scripts": {
+		"build": "pnpm -r --parallel build",
+		"dev": "pnpm -r --parallel dev",
+		"lint": "pnpm -r lint",
+		"typecheck": "pnpm -r typecheck"
+	},
+	"keywords": [],
+	"author": "jun094",
+	"license": "MIT",
+	"packageManager": "pnpm@10.11.1",
+	"devDependencies": {
+		"@types/node": "^22.15.29",
+		"tsup": "^8.5.0",
+		"typescript": "^5.8.3"
+	}
+}

@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no actual release)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    
+    permissions:
+      contents: write # for creating releases
+      issues: write   # for updating issues
+      pull-requests: write # for creating PR
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.1
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Type check
+        run: pnpm typecheck
+        
+      - name: Lint
+        run: pnpm lint
+        
+      - name: Build
+        run: pnpm build
+        
+      # TODO: 테스트 추가 후 활성화
+      # - name: Test
+      #   run: pnpm test
+        
+      - name: Create distribution package
+        run: |
+          mkdir -p dist
+          # 빌드된 파일들을 dist 디렉토리로 복사
+          cp -r apps/figma-connector/dist dist/figma-connector
+          cp -r packages/shared-types/dist dist/shared-types
+          # 주요 파일들 복사
+          cp package.json dist/
+          cp README.md dist/
+          cp CONTEXT.md dist/
+          
+      - name: Generate fresh design system data (for release)
+        env:
+          FIGMA_API_TOKEN: ${{ secrets.FIGMA_API_TOKEN }}
+          FIGMA_FILE_ID: ${{ secrets.FIGMA_FILE_ID }}
+        run: |
+          # 환경변수가 설정되어 있을 때만 실행
+          if [ -n "$FIGMA_API_TOKEN" ] && [ -n "$FIGMA_FILE_ID" ]; then
+            echo "🔄 Generating fresh design system data for release..."
+            pnpm start:harvester || echo "⚠️ Could not generate fresh data, using existing data"
+          else
+            echo "⚠️ Figma credentials not available, skipping data generation"
+          fi
+          
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            echo "🧪 Dry run mode - checking changeset status..."
+            pnpm changeset status --verbose
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            # 실제 changeset이 있는지 확인
+            if pnpm changeset status --since=HEAD~1 2>/dev/null | grep -q "🦋"; then
+              echo "📦 Changes detected!"
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+            else
+              echo "📭 No changes to release"
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+          
+      - name: Create Release Pull Request or Publish
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset:version
+          publish: pnpm changeset:publish
+          title: "🚀 Release new version"
+          commit: "chore: update versions"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📋 Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dry Run**: ${{ github.event.inputs.dry_run || 'false' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Has Changes**: ${{ steps.changes.outputs.has_changes || 'unknown' }}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f "CHANGELOG.md" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📝 Latest Changes" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            head -n 20 CHANGELOG.md >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi

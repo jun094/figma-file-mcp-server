@@ -1,0 +1,104 @@
+name: 🐛 Bug Report
+description: 버그를 발견하셨나요? 문제를 해결할 수 있도록 도와주세요!
+title: "[BUG] "
+labels: ["bug", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🐛 **버그를 신고해주셔서 감사합니다!**
+        
+        명확하고 자세한 정보를 제공해주시면 문제를 더 빠르게 해결할 수 있습니다.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 🔍 버그 설명
+      description: 발생한 버그에 대해 명확하고 간결하게 설명해주세요.
+      placeholder: "예: Figma API 호출 시 401 Unauthorized 에러가 발생합니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 🔄 재현 단계
+      description: 버그를 재현할 수 있는 단계를 순서대로 작성해주세요.
+      placeholder: |
+        1. '...' 명령어 실행
+        2. '....' 환경변수 설정
+        3. '....' 버튼 클릭
+        4. 에러 확인
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: ✅ 기대했던 동작
+      description: 어떤 동작을 기대했는지 명확하게 설명해주세요.
+      placeholder: "예: Figma 컴포넌트 데이터가 성공적으로 추출되어야 합니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: ❌ 실제 발생한 동작
+      description: 실제로 어떤 일이 발생했는지 설명해주세요.
+      placeholder: "예: 401 에러와 함께 'Invalid token' 메시지가 표시됩니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🛠️ 환경 정보
+      description: 사용 중인 환경에 대한 정보를 제공해주세요.
+      placeholder: |
+        - OS: [예: macOS 14.1, Windows 11, Ubuntu 22.04]
+        - Node.js 버전: [예: 20.10.0]
+        - pnpm 버전: [예: 10.11.1]
+        - 패키지 버전: [예: @figma-ds-ai/harvester@1.0.0]
+        - Figma API Token 권한: [예: Read-only, 파일 읽기 권한 있음]
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📋 로그 및 에러 메시지
+      description: 관련된 로그나 에러 메시지를 첨부해주세요.
+      placeholder: |
+        ```
+        여기에 로그나 에러 메시지를 붙여넣어주세요
+        ```
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📎 추가 정보
+      description: 스크린샷, 설정 파일, 또는 기타 유용한 정보가 있다면 공유해주세요.
+      placeholder: "추가로 도움이 될 만한 정보가 있다면 작성해주세요."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ 체크리스트
+      description: 버그 리포트 제출 전 확인해주세요.
+      options:
+        - label: 기존 이슈에서 동일한 문제가 보고되지 않았는지 확인했습니다.
+          required: true
+        - label: 최신 버전을 사용하고 있습니다.
+          required: true
+        - label: 환경변수 설정을 확인했습니다. (FIGMA_API_TOKEN, FIGMA_FILE_ID)
+          required: false
+        - label: README의 설치 및 사용 가이드를 따라했습니다.
+          required: true

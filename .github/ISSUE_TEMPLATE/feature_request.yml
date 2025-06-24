@@ -1,0 +1,120 @@
+name: ✨ Feature Request
+description: 새로운 기능이나 개선 사항을 제안해주세요!
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ✨ **새로운 아이디어를 제안해주셔서 감사합니다!**
+        
+        여러분의 피드백은 프로젝트 발전에 큰 도움이 됩니다.
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: 🤔 해결하고자 하는 문제
+      description: 현재 어떤 문제나 불편함이 있나요? 기능이 필요한 배경을 설명해주세요.
+      placeholder: "예: 현재 Figma 변수 데이터를 수동으로 확인해야 해서 번거롭습니다. 자동으로 변수 변경사항을 감지하고 알림을 받고 싶습니다."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 💡 제안하는 해결책
+      description: 어떤 방식으로 문제를 해결하고 싶으신가요?
+      placeholder: |
+        예: 
+        - Figma 파일의 변수 변경사항을 주기적으로 모니터링하는 기능
+        - 변경사항 발견 시 Slack/Discord 웹훅으로 알림 전송
+        - 변경 내역을 자동으로 CHANGELOG.md에 기록
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: 📂 기능 카테고리
+      description: 어떤 영역의 기능인가요?
+      options:
+        - "데이터 추출 (Figma API 연동)"
+        - "데이터 변환 및 저장 (YAML 처리)"
+        - "Q&A 엔진 (자연어 처리)"
+        - "API 서버 (HTTP 엔드포인트)"
+        - "CLI 도구 개선"
+        - "모니터링 및 알림"
+        - "개발자 경험 (DX)"
+        - "문서화"
+        - "테스팅"
+        - "성능 최적화"
+        - "기타"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 🎯 우선순위
+      description: 이 기능이 얼마나 중요하다고 생각하시나요?
+      options:
+        - "🔥 높음 - 없으면 프로젝트 사용이 어려움"
+        - "📊 보통 - 있으면 좋지만 없어도 사용 가능"
+        - "💎 낮음 - 편의성 향상을 위한 기능"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 고려한 대안들
+      description: 다른 해결 방법이나 접근법을 고려해보셨나요?
+      placeholder: |
+        예:
+        - 수동으로 정기적 확인 (현재 방식의 한계)
+        - 다른 도구 사용 고려 (Figma Webhooks, 써드파티 서비스 등)
+        - 기존 오픈소스 솔루션 조사 결과
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📎 추가 정보
+      description: 참고 자료, 스크린샷, 관련 링크 등이 있다면 공유해주세요.
+      placeholder: |
+        - 참고할 만한 다른 프로젝트나 라이브러리
+        - 관련 문서나 API 레퍼런스
+        - 스크린샷이나 mockup
+        - 사용 사례나 시나리오
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: 🛠️ 구현 아이디어 (선택)
+      description: 개발 경험이 있으시다면 구현 방향에 대한 아이디어를 공유해주세요.
+      placeholder: |
+        예:
+        - 사용할 수 있는 라이브러리나 API
+        - 기술적 접근법
+        - 예상되는 구현 난이도
+        - 기여 의향 여부
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ 체크리스트
+      description: 기능 요청 제출 전 확인해주세요.
+      options:
+        - label: 기존 이슈에서 동일한 기능이 요청되지 않았는지 확인했습니다.
+          required: true
+        - label: 현재 프로젝트의 목표와 방향성에 맞는 기능이라고 생각합니다.
+          required: true
+        - label: 가능하다면 이 기능 개발에 기여할 의향이 있습니다.
+          required: false

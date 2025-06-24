@@ -1,34 +1,93 @@
 {
-	"name": "figma-ds-ai-monorepo",
-	"version": "1.0.0",
-	"private": true,
-	"description": "A monorepo for Figma Design System AI tools, including a data harvester and a Q&A server.",
-	"scripts": {
-		"//----- DEVELOPMENT & BUILD SCRIPTS -----//": "",
-		"dev": "pnpm -r --parallel dev",
-		"build": "pnpm -r --parallel build",
-		"build:harvester": "pnpm --filter @figma-ds-ai/harvester build",
-		"build:types": "pnpm --filter @figma-ds-ai/types build",
-		"//----- START SCRIPTS -----//": "",
-		"start:harvester": "pnpm --filter @figma-ds-ai/harvester start",
-		"//----- LINTING & FORMATTING -----//": "",
-		"lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
-		"lint:fix": "eslint . --ext .ts,.tsx --fix",
-		"format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-		"//----- TYPE CHECKING -----//": "",
-		"typecheck": "pnpm -r typecheck",
-		"typecheck:all": "tsc --build --force apps packages",
-		"//----- CLEANUP -----//": "",
-		"clean": "pnpm -r exec rm -rf dist .turbo .tsbuildinfo node_modules && rm -rf node_modules",
-		"//----- UTILITY SCRIPTS -----(ex. prepare: husky install) //": ""
-	},
-	"keywords": [],
-	"author": "jun094",
-	"license": "MIT",
-	"packageManager": "pnpm@10.11.1",
-	"devDependencies": {
-		"@types/node": "^22.15.29",
-		"tsup": "^8.5.0",
-		"typescript": "^5.8.3"
-	}
+  "name": "figma-ds-ai-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A monorepo for Figma Design System AI tools, including a data harvester and a Q&A server.",
+  "scripts": {
+    "//----- DEVELOPMENT & BUILD SCRIPTS -----//": "",
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r --parallel build",
+    "build:harvester": "pnpm --filter @figma-ds-ai/harvester build",
+    "build:types": "pnpm --filter @figma-ds-ai/types build",
+    "//----- START SCRIPTS -----//": "",
+    "start:harvester": "pnpm --filter @figma-ds-ai/harvester start",
+    "//----- LINTING & FORMATTING -----//": "",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "//----- TYPE CHECKING -----//": "",
+    "typecheck": "pnpm -r typecheck",
+    "typecheck:all": "tsc --build --force apps packages",
+    "//----- TESTING -----//": "",
+    "test": "echo \"TODO: Add tests\" && exit 0",
+    "test:coverage": "echo \"TODO: Add test coverage\" && exit 0",
+    "test:watch": "echo \"TODO: Add test watch mode\" && exit 0",
+    "//----- SECURITY & AUDIT -----//": "",
+    "audit": "pnpm audit --audit-level moderate",
+    "audit:fix": "pnpm audit --fix",
+    "//----- RELEASE & VERSIONING -----//": "",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "version:check": "changeset status",
+    "//----- CLEANUP -----//": "",
+    "clean": "pnpm -r exec rm -rf dist .turbo .tsbuildinfo node_modules && rm -rf node_modules",
+    "clean:deps": "rm -rf node_modules pnpm-lock.yaml && pnpm -r exec rm -rf node_modules",
+    "//----- UTILITY SCRIPTS -----//": "",
+    "preinstall": "npx only-allow pnpm",
+    "postinstall": "echo \"📦 Installation complete! Run 'pnpm dev' to start development.\"",
+    "prepare": "husky install || true"
+  },
+  "keywords": [
+    "figma",
+    "design-system",
+    "automation",
+    "mcp",
+    "yaml",
+    "typescript",
+    "monorepo"
+  ],
+  "author": "jun094",
+  "license": "MIT",
+  "packageManager": "pnpm@10.11.1",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jun094/figma-file-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jun094/figma-file-mcp-server/issues"
+  },
+  "homepage": "https://github.com/jun094/figma-file-mcp-server#readme",
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "//----- 4주차 추가 의존성 -----//": "",
+    "@changesets/cli": "^2.27.1",
+    "@changesets/changelog-github": "^0.5.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "prettier": "^3.2.5",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,json,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
 }

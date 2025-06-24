@@ -19,13 +19,21 @@
     "//----- TYPE CHECKING -----//": "",
     "typecheck": "pnpm -r typecheck",
     "typecheck:all": "tsc --build --force apps packages",
-    "//----- TESTING -----//": "",
-    "test": "echo \"TODO: Add tests\" && exit 0",
-    "test:coverage": "echo \"TODO: Add test coverage\" && exit 0",
-    "test:watch": "echo \"TODO: Add test watch mode\" && exit 0",
+    "//----- TESTING (5주차 추가) -----//": "",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:basic": "jest --testPathPattern=\"basic|smoke|integration\" --verbose",
+    "test:performance": "jest --testPathPattern=\"performance\" --verbose",
+    "test:e2e": "jest --testPathPattern=\"e2e\" --verbose",
+    "test:unit": "jest --testPathPattern=\"test\\.ts$\" --verbose",
     "//----- SECURITY & AUDIT -----//": "",
     "audit": "pnpm audit --audit-level moderate",
     "audit:fix": "pnpm audit --fix",
+    "security:scan": "snyk test",
+    "security:monitor": "snyk monitor",
+    "licenses:check": "license-checker --onlyAllow \"MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD\"",
     "//----- RELEASE & VERSIONING -----//": "",
     "changeset": "changeset",
     "changeset:version": "changeset version",
@@ -34,10 +42,18 @@
     "//----- CLEANUP -----//": "",
     "clean": "pnpm -r exec rm -rf dist .turbo .tsbuildinfo node_modules && rm -rf node_modules",
     "clean:deps": "rm -rf node_modules pnpm-lock.yaml && pnpm -r exec rm -rf node_modules",
+    "clean:coverage": "rm -rf coverage .nyc_output junit.xml",
+    "clean:cache": "rm -rf .jest-cache .eslintcache",
     "//----- UTILITY SCRIPTS -----//": "",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "echo \"📦 Installation complete! Run 'pnpm dev' to start development.\"",
-    "prepare": "husky install || true"
+    "prepare": "husky install || true",
+    "//----- CI/CD HELPERS -----//": "",
+    "ci:install": "pnpm install --frozen-lockfile",
+    "ci:build": "pnpm build && pnpm typecheck",
+    "ci:test": "pnpm test:ci",
+    "ci:lint": "pnpm lint && pnpm format:check",
+    "ci:security": "pnpm audit && pnpm licenses:check"
   },
   "keywords": [
     "figma",
@@ -46,7 +62,9 @@
     "mcp",
     "yaml",
     "typescript",
-    "monorepo"
+    "monorepo",
+    "testing",
+    "security"
   ],
   "author": "jun094",
   "license": "MIT",
@@ -67,7 +85,7 @@
     "@types/node": "^22.15.29",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
-    "//----- 4주차 추가 의존성 -----//": "",
+    "//----- 4주차 의존성 -----//": "",
     "@changesets/cli": "^2.27.1",
     "@changesets/changelog-github": "^0.5.0",
     "eslint": "^8.57.0",
@@ -75,15 +93,46 @@
     "@typescript-eslint/parser": "^6.21.0",
     "prettier": "^3.2.5",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2"
+    "lint-staged": "^15.2.2",
+    "//----- 5주차 추가 의존성 -----//": "",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "ts-jest": "^29.1.2",
+    "jest-extended": "^4.0.2",
+    "jest-junit": "^16.0.0",
+    "jest-html-reporters": "^3.1.7",
+    "@jest/globals": "^29.7.0",
+    "codecov": "^3.8.3",
+    "license-checker": "^25.0.1",
+    "snyk": "^1.1291.0",
+    "cross-env": "^7.0.3"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "jest --findRelatedTests --passWithNoTests"
     ],
     "*.{md,json,yaml,yml}": [
       "prettier --write"
+    ]
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "apps/**/*.ts",
+      "packages/**/*.ts",
+      "!**/*.d.ts",
+      "!**/*.test.ts",
+      "!**/node_modules/**",
+      "!**/dist/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "lcov", "html"],
+    "testMatch": [
+      "<rootDir>/apps/**/*.test.ts",
+      "<rootDir>/packages/**/*.test.ts"
     ]
   },
   "publishConfig": {

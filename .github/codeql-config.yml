@@ -1,0 +1,35 @@
+name: "CodeQL Configuration"
+
+# 스캔할 언어별 설정
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+# 스캔에서 제외할 경로
+paths-ignore:
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/coverage/**"
+  - "**/*.d.ts"
+  - "**/output/**"
+
+# 스캔할 경로 (선택사항 - 기본적으로 모든 파일 스캔)
+paths:
+  - "apps/"
+  - "packages/"
+
+# 추가 분석 옵션
+disable-default-path-filters: false
+
+# JavaScript/TypeScript 특화 설정
+javascript:
+  # 의존성 설치 단계 건너뛰기 (이미 CI에서 수행)
+  index-files: true
+  
+  # 추가 쿼리 팩
+  packs:
+    - "codeql/javascript-queries:Security"
+    - "codeql/javascript-queries:AlertSuppression"

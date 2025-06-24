@@ -1,0 +1,237 @@
+name: Community Management
+
+on:
+  schedule:
+    # 매일 오전 9시 (UTC) 스테일 이슈/PR 체크
+    - cron: '0 9 * * *'
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - uses: actions/stale@v9
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        
+        # 이슈 관련 설정
+        stale-issue-message: |
+          👋 이 이슈는 30일 동안 활동이 없어 곧 닫힐 예정입니다.
+          
+          이슈가 여전히 유효하다면:
+          - 댓글을 남겨주세요
+          - 추가 정보를 제공해주세요
+          - `needs-attention` 라벨을 추가해주세요
+          
+          감사합니다! 🙏
+        close-issue-message: |
+          🔒 이 이슈는 60일 동안 활동이 없어 자동으로 닫혔습니다.
+          
+          문제가 지속되면 새로운 이슈를 생성해주세요.
+        days-before-stale: 30
+        days-before-close: 60
+        stale-issue-label: 'stale'
+        
+        # PR 관련 설정
+        stale-pr-message: |
+          🔄 이 PR은 30일 동안 활동이 없어 곧 닫힐 예정입니다.
+          
+          PR이 여전히 유효하다면:
+          - 리베이스하여 최신 상태로 업데이트해주세요
+          - 댓글로 진행 상황을 알려주세요
+          - 도움이 필요하면 `help-wanted` 라벨을 추가해주세요
+          
+          감사합니다! 🚀
+        close-pr-message: |
+          🔒 이 PR은 60일 동안 활동이 없어 자동으로 닫혔습니다.
+          
+          변경사항이 여전히 필요하다면 새로운 PR을 생성해주세요.
+        days-before-pr-stale: 30
+        days-before-pr-close: 60
+        stale-pr-label: 'stale'
+        
+        # 제외할 라벨
+        exempt-issue-labels: 'pinned,security,needs-attention,good-first-issue'
+        exempt-pr-labels: 'pinned,security,needs-attention,work-in-progress'
+        
+        # 드래프트 PR 제외
+        exempt-draft-pr: true
+        
+        # 마일스톤이 있는 이슈/PR 제외
+        exempt-milestones: true
+        
+        # 활동 제한
+        operations-per-run: 50
+
+  welcome:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    
+    steps:
+    - name: Welcome new contributor
+      uses: actions/github-script@v7
+      with:
+        script: |
+          // 첫 번째 이슈인지 확인
+          const { data: issues } = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            creator: context.payload.issue.user.login,
+            state: 'all'
+          });
+          
+          if (issues.length === 1) {
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `👋 **${context.payload.issue.user.login}님, 첫 번째 이슈를 등록해주셔서 감사합니다!**
+
+              🎉 Figma Design System Q&A MCP 서버 프로젝트에 관심을 가져주셔서 진심으로 감사드립니다.
+
+              ## 📋 다음 단계
+              - [ ] 이슈가 명확하고 재현 가능한지 확인해주세요
+              - [ ] 관련 로그나 스크린샷이 있다면 추가해주세요
+              - [ ] [기여 가이드라인](./CONTRIBUTING.md)을 참고해주세요
+
+              ## 🚀 기여하고 싶으시다면
+              - \`good-first-issue\` 라벨이 있는 이슈들을 확인해보세요
+              - 질문이 있으시면 언제든 댓글로 문의해주세요
+              - [GitHub Discussions](https://github.com/${context.repo.owner}/${context.repo.repo}/discussions)에서 커뮤니티와 소통하세요
+
+              감사합니다! 🙏`
+            });
+          }
+
+  welcome-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target' && github.event.action == 'opened'
+    
+    steps:
+    - name: Welcome first-time contributor
+      uses: actions/github-script@v7
+      with:
+        script: |
+          // 첫 번째 PR인지 확인
+          const { data: prs } = await github.rest.pulls.list({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'all',
+            per_page: 100
+          });
+          
+          const userPrs = prs.filter(pr => pr.user.login === context.payload.pull_request.user.login);
+          
+          if (userPrs.length === 1) {
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🎉 **${context.payload.pull_request.user.login}님의 첫 번째 기여를 환영합니다!**
+
+              정말 감사합니다! 여러분의 기여가 프로젝트를 더욱 발전시킵니다. 🚀
+
+              ## 📋 PR 체크리스트
+              - [ ] CI 빌드가 통과하는지 확인해주세요
+              - [ ] 코드 리뷰 피드백에 응답해주세요
+              - [ ] 필요한 테스트를 추가해주세요
+              - [ ] [기여 가이드라인](./CONTRIBUTING.md)을 따라주세요
+
+              ## 👥 리뷰 프로세스
+              - 메인테이너가 곧 리뷰를 진행할 예정입니다
+              - 평균 응답 시간은 2-3일입니다
+              - 질문이 있으시면 언제든 댓글로 문의해주세요
+
+              다시 한 번 감사드립니다! 🙏`
+            });
+          }
+
+  label-management:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    
+    steps:
+    - name: Auto-label issues
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const issue = context.payload.issue;
+          const title = issue.title.toLowerCase();
+          const body = issue.body.toLowerCase();
+          const labels = [];
+          
+          // 자동 라벨링 로직
+          if (title.includes('[bug]') || body.includes('bug') || body.includes('error')) {
+            labels.push('bug');
+          }
+          
+          if (title.includes('[feature]') || body.includes('feature') || body.includes('enhancement')) {
+            labels.push('enhancement');
+          }
+          
+          if (body.includes('figma api') || body.includes('figma connector')) {
+            labels.push('figma-api');
+          }
+          
+          if (body.includes('yaml') || body.includes('데이터 변환')) {
+            labels.push('data-processing');
+          }
+          
+          if (body.includes('documentation') || body.includes('문서')) {
+            labels.push('documentation');
+          }
+          
+          if (body.includes('good first issue') || body.includes('beginner')) {
+            labels.push('good-first-issue');
+          }
+          
+          if (labels.length > 0) {
+            await github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: labels
+            });
+          }
+
+  community-stats:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - name: Generate community statistics
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          
+          // 최근 30일 통계 수집
+          const { data: issues } = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'all',
+            since: thirtyDaysAgo.toISOString(),
+            per_page: 100
+          });
+          
+          const stats = {
+            totalIssues: issues.filter(i => !i.pull_request).length,
+            totalPRs: issues.filter(i => i.pull_request).length,
+            openIssues: issues.filter(i => !i.pull_request && i.state === 'open').length,
+            closedIssues: issues.filter(i => !i.pull_request && i.state === 'closed').length,
+            contributors: [...new Set(issues.map(i => i.user.login))].length
+          };
+          
+          console.log('📊 Community Statistics (Last 30 days):');
+          console.log(`- Issues opened: ${stats.totalIssues}`);
+          console.log(`- PRs opened: ${stats.totalPRs}`);
+          console.log(`- Issues closed: ${stats.closedIssues}`);
+          console.log(`- Active contributors: ${stats.contributors}`);
